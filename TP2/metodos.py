@@ -12,7 +12,6 @@ def euler(f, t0, y0, h, yfin, error):
 
 	i = 1
 	while w < yfin - error:
-	# for i in range(1, 500): 	# Limite arbitrario?
 		w = w + h * f(t, w)
 		t = t0 + i * h
 		resultados_y.append(w)
