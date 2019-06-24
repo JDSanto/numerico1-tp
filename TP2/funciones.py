@@ -20,8 +20,8 @@ NBOL = 50				# Cantidad bolsillos
 CADE = round(-10 / 10000 * (NP - 90000) + 35) 			# Tiempo de cadencia [s]
 TMP1 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K]
 TMP2 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K] 	EJ 3: TMP1 + 40
-TMP1 = 700.17916308 + 273	# Temperatura [K]
-TMP2 = 554.95793595 + 273	# Temperatura [K] 	EJ 3: TMP1 + 40
+TMP1 = 700.23527494471 + 273
+TMP2 = 554.8956417916545 + 273
 
 
 # Parametros de la transferencia de calor
@@ -41,40 +41,25 @@ def posicion(t):
 def masa_tubo():
 	return DENS * np.pi * D_OD * E_WT * (1 - E_WT / D_OD) * LG_T
 
-def temp_horno(t): 
-	if posicion(t) <= LG_H / 2:
-		return TMP1
-	return TMP2
-
-def intercambio_conveccion(tiempo, temp):
-	return - HCNV * sup_tubo() * (temp - temp_horno(tiempo)) / (masa_tubo() * CESP)
-
-def intercambio_radiacion(tiempo, temp):
-	return - SGMA * EPSL * sup_tubo() * (temp**4 - temp_horno(tiempo)**4) / (masa_tubo() * CESP)
-
-def intercambio_total(tiempo, temp):
-	return intercambio_radiacion(tiempo, temp) + intercambio_conveccion(tiempo, temp)
-
-
-def temperatura_exacta(t0):
-	return lambda t: TMP1 + (t0 - TMP1) * np.e**(-(HCNV * sup_tubo()) / (masa_tubo() * CESP) * t)
-
-
-
-
-def temp_horno_5(t, tmp1, tmp2): 
+def temp_horno(t, tmp1, tmp2): 
 	if posicion(t) <= LG_H / 2:
 		return tmp1
 	return tmp2
 
-def intercambio_conveccion_5(tiempo, temp, tmp1, tmp2):
-	return - HCNV * sup_tubo() * (temp - temp_horno_5(tiempo, tmp1, tmp2)) / (masa_tubo() * CESP)
+def intercambio_conveccion(tmp1, tmp2):
+	def F(tiempo, temp):
+		return - HCNV * sup_tubo() * (temp - temp_horno(tiempo, tmp1, tmp2)) / (masa_tubo() * CESP)
+	return F
 
-def intercambio_radiacion_5(tiempo, temp, tmp1, tmp2):
-	return - SGMA * EPSL * sup_tubo() * (temp**4 - temp_horno_5(tiempo, tmp1, tmp2)**4) / (masa_tubo() * CESP)
+def intercambio_radiacion(tmp1, tmp2):
+	def F(tiempo, temp):
+		return - SGMA * EPSL * sup_tubo() * (temp**4 - temp_horno(tiempo, tmp1, tmp2)**4) / (masa_tubo() * CESP)
+	return F
 
-def intercambio_total_5(tiempo, temp, tmp1, tmp2):
-	return intercambio_conveccion_5(tiempo, temp, tmp1 + 273, tmp2 + 273) + intercambio_radiacion_5(tiempo, temp, tmp1 + 273, tmp2 + 273)
+def intercambio_total(tmp1, tmp2):
+	def F(tiempo, temp):
+		return intercambio_radiacion(tmp1, tmp2)(tiempo, temp) + intercambio_conveccion(tmp1, tmp2)(tiempo, temp)
+	return F
 
-def temperatura_exacta_5(t0):
+def temperatura_exacta(t0):
 	return lambda t: TMP1 + (t0 - TMP1) * np.e**(-(HCNV * sup_tubo()) / (masa_tubo() * CESP) * t)
