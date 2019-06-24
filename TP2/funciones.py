@@ -1,7 +1,7 @@
 import numpy as np
 
 # Constantes
-NP = 101109
+NP = 102145
 
 # Propiedades del material
 DENS = 7850 			# Densidad [kg / m3]
@@ -20,6 +20,9 @@ NBOL = 50				# Cantidad bolsillos
 CADE = round(-10 / 10000 * (NP - 90000) + 35) 			# Tiempo de cadencia [s]
 TMP1 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K]
 TMP2 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K] 	EJ 3: TMP1 + 40
+TMP1 = 700.17916308 + 273	# Temperatura [K]
+TMP2 = 554.95793595 + 273	# Temperatura [K] 	EJ 3: TMP1 + 40
+
 
 # Parametros de la transferencia de calor
 HCNV = 20			# Coeficiente de conveccion [W / m2 K]
@@ -56,3 +59,22 @@ def intercambio_total(tiempo, temp):
 def temperatura_exacta(t0):
 	return lambda t: TMP1 + (t0 - TMP1) * np.e**(-(HCNV * sup_tubo()) / (masa_tubo() * CESP) * t)
 
+
+
+
+def temp_horno_5(t, tmp1, tmp2): 
+	if posicion(t) <= LG_H / 2:
+		return tmp1
+	return tmp2
+
+def intercambio_conveccion_5(tiempo, temp, tmp1, tmp2):
+	return - HCNV * sup_tubo() * (temp - temp_horno_5(tiempo, tmp1, tmp2)) / (masa_tubo() * CESP)
+
+def intercambio_radiacion_5(tiempo, temp, tmp1, tmp2):
+	return - SGMA * EPSL * sup_tubo() * (temp**4 - temp_horno_5(tiempo, tmp1, tmp2)**4) / (masa_tubo() * CESP)
+
+def intercambio_total_5(tiempo, temp, tmp1, tmp2):
+	return intercambio_conveccion_5(tiempo, temp, tmp1 + 273, tmp2 + 273) + intercambio_radiacion_5(tiempo, temp, tmp1 + 273, tmp2 + 273)
+
+def temperatura_exacta_5(t0):
+	return lambda t: TMP1 + (t0 - TMP1) * np.e**(-(HCNV * sup_tubo()) / (masa_tubo() * CESP) * t)
