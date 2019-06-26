@@ -61,6 +61,7 @@ def generar_info_raices(mod_masa, int_bisec, int_punto, int_newton):
 
     plt.figure(figsize=(10,7))
     plt.plot(range(n_iter_punto), delta_abs_graph_punto, 'ro', label='Punto fijo')
+    # print(delta_abs_graph_punto)
     plt.grid(True)
     plt.yscale('log')
     plt.xlabel('i')

@@ -29,7 +29,9 @@ def runge_kutta_4(f, t0, t_fin, y0, h):
 	t = t0
 	w = y0
 
-	i = 0
+	resultados_y.append(w)
+	resultados_t.append(t)
+	i = 1
 	while t <= t_fin:
 		k1 = h * f(t, w)
 		k2 = h * f(t + h / 2, w + k1 / 2)

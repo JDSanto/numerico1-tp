@@ -20,8 +20,6 @@ NBOL = 50				# Cantidad bolsillos
 CADE = round(-10 / 10000 * (NP - 90000) + 35) 			# Tiempo de cadencia [s]
 TMP1 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K]
 TMP2 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K] 	EJ 3: TMP1 + 40
-TMP1 = 700.23527494471 + 273
-TMP2 = 554.8956417916545 + 273
 
 
 # Parametros de la transferencia de calor
