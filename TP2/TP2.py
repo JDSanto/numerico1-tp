@@ -2,38 +2,8 @@ import os
 import numpy as np 
 import matplotlib.pylab as plt 
 
-from funciones import intercambio_conveccion, intercambio_total, temperatura_exacta, CADE, TMP1, TMP2, NP
-from metodos import euler, runge_kutta_4, punto_fijo_sistema
-
-
-def temps_a_celsius(arr):
-	for x in range(len(arr)):
-		arr[x] = arr[x] - 273 		# Kelvin a Celsius
-
-
-def tiempos_a_minutos(arr):
-	for x in range(len(arr)):
-		arr[x] = arr[x] / 60		# Segundos a minutos
-
-
-def buscar_valores_exactos(t0, t_fin, T0, CADE):
-	arr_t = []
-	arr_T = []
-
-	arr_t.append(t0)
-	arr_T.append(T0)
-
-	i = 1
-	t = t0
-	while t < t_fin:
-		t = t0 + i * CADE
-		T = temperatura_exacta(T0)(t)
-		arr_t.append(t)
-		arr_T.append(T)
-		i = i + 1
-
-	return [arr_T, arr_t]
-
+from funciones import intercambio_conveccion, intercambio_total, temperatura_exacta, CADE, TMP1, TMP2, NP, temps_a_celsius, tiempos_a_minutos
+from metodos import euler, runge_kutta_4, punto_fijo_sistema, buscar_valores_exactos
 
 
 def buscar_intervalo_temperatura(arr, tmp):
@@ -58,9 +28,6 @@ def buscar_tk_sk(tmp1, tmp2):
 	t_fin = 1200
 	tmp = tmp2 - 10 - 273
 	arr = runge_kutta_4(intercambio_total(tmp1, tmp2), t0, t_fin, T0, CADE)
-
-	temps_a_celsius(arr[0])
-	tiempos_a_minutos(arr[1])
 
 	pos_temp_i = -1
 	for i in range(len(arr[0])):
@@ -90,12 +57,6 @@ def ej1():
 	valores_runge = runge_kutta_4(intercambio_conveccion(TMP1, TMP2), t0, t_fin, T0, CADE)
 	valores_exactos = buscar_valores_exactos(t0, t_fin, T0, CADE)
 
-	temps_a_celsius(valores_euler[0])
-	temps_a_celsius(valores_runge[0])
-	temps_a_celsius(valores_exactos[0])
-	tiempos_a_minutos(valores_euler[1])
-	tiempos_a_minutos(valores_runge[1])
-	tiempos_a_minutos(valores_exactos[1])
 
 	xx = np.linspace(t0, t_fin)
 	yy = temperatura_exacta(T0)(xx)
@@ -132,10 +93,7 @@ def ej2():
 	# Optamos por usar los valores de RK
 	# valores_euler = euler(intercambio_total(TMP1, TMP2), t0, t_fin, T0, CADE)
 	valores_runge = runge_kutta_4(intercambio_total(TMP1, TMP2), t0, t_fin, T0, CADE)
-	# temps_a_celsius(valores_euler[0])
-	temps_a_celsius(valores_runge[0])
-	# tiempos_a_minutos(valores_euler[1])
-	tiempos_a_minutos(valores_runge[1])
+
 
 	xx = np.linspace(t0, t_fin)
 	yy = temperatura_exacta(T0)(xx)
@@ -169,9 +127,6 @@ def ej3():
 	tmp2 = TMP2 - 5
 	valores_runge = runge_kutta_4(intercambio_total(tmp1, tmp2), t0, t_fin, T0, CADE)
 
-	temps_a_celsius(valores_runge[0])
-	tiempos_a_minutos(valores_runge[1])
-
 	buscar_intervalo_temperatura(valores_runge, tmp2 - 10 - 273)
 
 	print("")
@@ -190,8 +145,6 @@ def ej4():
 	tmp2 = TMP2 - 5
 	valores_runge = runge_kutta_4(intercambio_total(tmp1, tmp2), t0, t_fin, T0, CADE - CADE / 20)
 
-	temps_a_celsius(valores_runge[0])
-	tiempos_a_minutos(valores_runge[1])
 
 	buscar_intervalo_temperatura(valores_runge, tmp2 - 10 - 273)
 

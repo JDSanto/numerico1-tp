@@ -44,6 +44,17 @@ def temp_horno(t, tmp1, tmp2):
 		return tmp1
 	return tmp2
 
+
+def temps_a_celsius(arr):
+	for x in range(len(arr)):
+		arr[x] = arr[x] - 273 		# Kelvin a Celsius
+
+
+def tiempos_a_minutos(arr):
+	for x in range(len(arr)):
+		arr[x] = arr[x] / 60		# Segundos a minutos
+	
+
 def intercambio_conveccion(tmp1, tmp2):
 	def F(tiempo, temp):
 		return - HCNV * sup_tubo() * (temp - temp_horno(tiempo, tmp1, tmp2)) / (masa_tubo() * CESP)
