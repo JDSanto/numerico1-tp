@@ -1,15 +1,6 @@
 import numpy as np
 import sys
-from funciones import temperatura_exacta
-
-def temps_a_celsius(arr):
-	for x in range(len(arr)):
-		arr[x] = arr[x] - 273 		# Kelvin a Celsius
-
-
-def tiempos_a_minutos(arr):
-	for x in range(len(arr)):
-		arr[x] = arr[x] / 60		# Segundos a minutos
+from funciones import temperatura_exacta, temps_a_celsius, tiempos_a_minutos
 
 
 def euler(f, t0, t_fin, y0, h):
@@ -67,17 +58,18 @@ def runge_kutta_4(f, t0, t_fin, y0, h):
 	return [resultados_y, resultados_t]
 
 
-
-# def punto_fijo_sistema(f, x0, a_tol, n_max, j_inv, file=sys.stdout):
-def punto_fijo_sistema(f, x0, n_max, j_inv, file=sys.stdout):
+def punto_fijo_sistema(f, x0, err, j_inv):
     x = x0
-    delta = x0
+    delta = np.max(np.abs(x0))
 
-    for i in range(0, n_max):
+    i = 1
+    while delta > err:
         x_old = x
         x = np.subtract(x, j_inv.dot(f(x)))
+        delta = np.max(np.abs(np.subtract(x_old, x)))
+        i = i + 1
 
-    return x
+    return x, i
 
 def buscar_valores_exactos(t0, t_fin, T0, CADE):
 	arr_t = []

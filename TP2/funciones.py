@@ -18,6 +18,7 @@ NBOL = 50				# Cantidad bolsillos
 
 # Parametros del proceso
 CADE = round(-10 / 10000 * (NP - 90000) + 35) 			# Tiempo de cadencia [s]
+# CADE = CADE - CADE / 20 	# Descomentar esta linea para el ejercicio 4
 TMP1 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K]
 TMP2 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K] 	EJ 3: TMP1 + 40
 
