@@ -1,7 +1,7 @@
 import numpy as np
 
 # Constantes
-NP = 102145
+NP = 101109
 
 # Propiedades del material
 DENS = 7850 			# Densidad [kg / m3]
@@ -20,7 +20,7 @@ NBOL = 50				# Cantidad bolsillos
 CADE = round(-10 / 10000 * (NP - 90000) + 35) 			# Tiempo de cadencia [s]
 # CADE = CADE - CADE / 20 	# Descomentar esta linea para el ejercicio 4
 TMP1 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K]
-TMP2 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K] 	EJ 3: TMP1 + 40
+TMP2 = round(200 / 10000 * (NP - 90000) + 500) + 273	# Temperatura [K] 
 
 
 # Parametros de la transferencia de calor

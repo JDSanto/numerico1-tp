@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pylab as plt 
 import sys
 
-from funciones import intercambio_conveccion, intercambio_total, temperatura_exacta, CADE, TMP1, TMP2, NP, temps_a_celsius, tiempos_a_minutos
+from funciones import intercambio_conveccion, intercambio_total, temperatura_exacta, NBOL, CADE, TMP1, TMP2, NP, temps_a_celsius, tiempos_a_minutos
 from metodos import euler, runge_kutta_4, punto_fijo_sistema, buscar_valores_exactos
 
 
@@ -37,7 +37,7 @@ def ej1():
 
 	T0 = 20 + 273
 	t0 = 0
-	t_fin = 1200
+	t_fin = NBOL * CADE
 	valores_euler = euler(intercambio_conveccion(TMP1, TMP2), t0, t_fin, T0, CADE)
 	valores_runge = runge_kutta_4(intercambio_conveccion(TMP1, TMP2), t0, t_fin, T0, CADE)
 	valores_exactos = buscar_valores_exactos(t0, t_fin, T0, CADE)
@@ -48,11 +48,12 @@ def ej1():
 	plt.figure(figsize=(10,7))
 	tiempos_a_minutos(xx)
 	temps_a_celsius(yy)
-	plt.plot(xx, yy, lw=2)
-	plt.plot(valores_euler[1], valores_euler[0])
-	plt.plot(valores_runge[1], valores_runge[0])
-	plt.xlabel('t')
-	plt.ylabel('T(t)')
+	plt.plot(xx, yy, lw=2, label='Temperatura Exacta')
+	plt.plot(valores_euler[1], valores_euler[0], label='Euler')
+	plt.plot(valores_runge[1], valores_runge[0], label='Runge-Kutta 4')
+	plt.xlabel('t [min]')
+	plt.ylabel('T(t) [°C]')
+	plt.legend(loc='lower right')
 	plt.grid(True)
 	plt.savefig('ej1.png')
 
@@ -60,6 +61,9 @@ def ej1():
 	plt.yscale('log')
 	plt.plot(valores_euler[1], buscar_error(valores_exactos[0], valores_euler[0]), 'gs', label='Euler')
 	plt.plot(valores_runge[1], buscar_error(valores_exactos[0], valores_runge[0]), 'b^', label='Runge-Kutta 4')
+	plt.legend(loc='lower right')
+	plt.xlabel('t [min]')
+	plt.ylabel('error')
 	plt.grid(True)
 	plt.savefig('ej1-error.png')
 
@@ -75,7 +79,7 @@ def ej2():
 
 	T0 = 20 + 273
 	t0 = 0
-	t_fin = 1200
+	t_fin = NBOL * CADE
 	# Optamos por usar los valores de RK
 
 	valores_runge = runge_kutta_4(intercambio_total(TMP1, TMP2), t0, t_fin, T0, CADE)
@@ -85,10 +89,11 @@ def ej2():
 	plt.figure(figsize=(10,7))
 	tiempos_a_minutos(xx)
 	temps_a_celsius(yy)
-	plt.plot(xx, yy, lw=2)
-	plt.plot(valores_runge[1], valores_runge[0])
-	plt.xlabel('t')
-	plt.ylabel('T(t)')
+	plt.plot(xx, yy, lw=2, label='Temperatura Exacta')
+	plt.plot(valores_runge[1], valores_runge[0], label='Runge-Kutta 4')
+	plt.legend(loc='lower right')
+	plt.xlabel('t [min]')
+	plt.ylabel('T(t) [°C]')
 	plt.grid(True)
 	plt.savefig('ej2.png')
 
@@ -106,11 +111,11 @@ def ej3():
 
 	T0 = 20 + 273
 	t0 = 0
-	t_fin = 1200
+	t_fin = NBOL * CADE
 
 	# Valores de temperatura "a mano"
-	tmp1 = TMP1 + 85
-	tmp2 = TMP2 - 5
+	tmp1 = 1085
+	tmp2 = 995
 	valores_runge = runge_kutta_4(intercambio_total(tmp1, tmp2), t0, t_fin, T0, CADE)
 
 	buscar_intervalo_temperatura(valores_runge, tmp2 - 10 - 273, file)
@@ -129,14 +134,14 @@ def ej4():
 
 	T0 = 20 + 273
 	t0 = 0
-	t_fin = 1200
+	t_fin = NBOL * CADE
 
 	# Valores de temperatura "a mano"
-	tmp1 = TMP1 + 95
-	tmp2 = TMP2 - 5
+	tmp1 = 1100
+	tmp2 = 990
+
 	# Es necesario cambiar el valor de la cadencia descomentando una linea en el funciones.py
 	valores_runge = runge_kutta_4(intercambio_total(tmp1, tmp2), t0, t_fin, T0, CADE)
-
 
 	buscar_intervalo_temperatura(valores_runge, tmp2 - 10 - 273, file)
 
@@ -148,7 +153,7 @@ def ej4():
 def buscar_tk_sk(tmp1, tmp2):
 	T0 = 20 + 273
 	t0 = 0
-	t_fin = 1200
+	t_fin = NBOL * CADE
 	tmp = tmp2 - 10 - 273
 	arr = runge_kutta_4(intercambio_total(tmp1, tmp2), t0, t_fin, T0, CADE)
 
@@ -171,10 +176,10 @@ def sistema_funciones(tk_obj, sk_obj):
 
 def resolver_caso_ej5(sk_obj, tsk_obj, caso, file=sys.stdout):
 	j_inv = np.matrix([[0.25, 0.75], [0.75, 0.25]])
-	err = 1
+	err = 0.1
 	t0 = 0
 	T0 = 20 + 273
-	t_fin = 1200
+	t_fin = NBOL * CADE
 
 	x, n_iter = punto_fijo_sistema(sistema_funciones(tsk_obj, sk_obj), sistema_funciones(tsk_obj, sk_obj)(np.matrix([[TMP1], [TMP2]])), err, j_inv)
 	print('{0:4}\t{1: .14f}\t{2: .14f}\t{3: .14f}\t{4:4}'.format(sk_obj, tsk_obj, x.item(0) - 273, x.item(1) - 273, n_iter), file=file)
@@ -186,10 +191,11 @@ def resolver_caso_ej5(sk_obj, tsk_obj, caso, file=sys.stdout):
 	plt.figure(figsize=(10,7))
 	tiempos_a_minutos(xx)
 	temps_a_celsius(yy)
-	plt.plot(xx, yy, lw=2)
-	plt.plot(valores_runge[1], valores_runge[0])
-	plt.xlabel('t')
-	plt.ylabel('T(t)')
+	plt.plot(xx, yy, lw=2, label='Temperatura Exacta')
+	plt.plot(valores_runge[1], valores_runge[0], label='Runge-Kutta 4')
+	plt.legend(loc='lower right')
+	plt.xlabel('t [min]')
+	plt.ylabel('T(t) [°C]')
 	plt.grid(True)
 	plt.savefig('ej5' + caso + '.png')
 
@@ -201,7 +207,7 @@ def ej5():
 	os.chdir('ej5')
 	file = open('ej5.txt', 'w')
 
-	resolver_caso_ej5(10, 734.7560876525041, 'a', file)
+	resolver_caso_ej5(10, 719, 'a', file)
 	resolver_caso_ej5(10, round(200 / 10000 * (NP - 90000) + 550), 'b', file)
 	resolver_caso_ej5(10, round(200 / 10000 * (NP - 90000) + 600), 'c', file)
 

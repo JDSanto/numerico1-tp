@@ -14,7 +14,7 @@ def euler(f, t0, t_fin, y0, h):
 	resultados_t.append(t)
 
 	i = 1
-	while t <= t_fin:
+	while t < t_fin:
 		w = w + h * f(t, w)
 		t = t0 + i * h
 		resultados_y.append(w)
@@ -38,7 +38,7 @@ def runge_kutta_4(f, t0, t_fin, y0, h):
 	resultados_y.append(w)
 	resultados_t.append(t)
 	i = 1
-	while t <= t_fin:
+	while t < t_fin:
 		k1 = h * f(t, w)
 		k2 = h * f(t + h / 2, w + k1 / 2)
 		k3 = h * f(t + h / 2, w + k2 / 2)
